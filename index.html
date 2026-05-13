@@ -173,6 +173,7 @@
     .card.blue   .icon { background: #dbeafe; }
     .card.green  .icon { background: #dcfce7; }
     .card.purple .icon { background: #f3e8ff; }
+    .card.orange .icon { background: #ffedd5; }
     .card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .5rem; }
     .card p  { font-size: .875rem; color: var(--muted); line-height: 1.65; flex: 1; }
     .card-link { display: flex; align-items: center; gap: 5px; margin-top: 1.2rem; font-size: .875rem; font-weight: 700; color: var(--blue); }
@@ -292,8 +293,8 @@
   <p>เปรียบเทียบและวิเคราะห์ทางเลือกการเก็บข้อมูลระยะยาว
      พร้อมต้นทุนจริงและคู่มือตัดสินใจสำหรับองค์กร</p>
   <div class="hero-btns">
-    <a href="docs/Decision_Tree_Guide/" class="btn-white">🎯 เริ่มต้นที่นี่ →</a>
-    <a href="docs/Archive_Comparison_Summary/" class="btn-outline">ดูเอกสารทั้งหมด</a>
+    <a href="docs/Decision_Tree_Guide.html" class="btn-white">🎯 เริ่มต้นที่นี่ →</a>
+    <a href="archive_cost_calculator.html" class="btn-outline">🧮 คำนวณต้นทุน</a>
   </div>
 </header>
 
@@ -302,17 +303,17 @@
   <div class="stat"><div class="val">97%</div><div class="lbl">ประหยัดกว่าด้วย Azure Archive</div></div>
   <div class="stat"><div class="val">$55</div><div class="lbl">Azure Archive — 1 TB / 3 ปี</div></div>
   <div class="stat"><div class="val">$1,843</div><div class="lbl">M365 Archive — 1 TB / 3 ปี</div></div>
-  <div class="stat"><div class="val">3</div><div class="lbl">เอกสารประกอบการตัดสินใจ</div></div>
+  <div class="stat"><div class="val">4</div><div class="lbl">เอกสาร + เครื่องคำนวณต้นทุน</div></div>
 </div>
 
 <!-- ═══ DOC CARDS ═══ -->
 <section>
   <div class="container">
-    <h2 class="sec-title">เอกสารทั้งหมด</h2>
+    <h2 class="sec-title">เอกสารและเครื่องมือ</h2>
     <p class="sec-desc">เลือกอ่านตามสิ่งที่ต้องการค้นหา</p>
     <div class="cards">
 
-      <a href="docs/Archive_Comparison_Summary/" class="card blue">
+      <a href="docs/Archive_Comparison_Summary.html" class="card blue">
         <div class="icon">📊</div>
         <h3>การเปรียบเทียบ Archive Solutions</h3>
         <p>ตารางเปรียบเทียบ Microsoft 365 Archive กับ Azure Archive Storage ครอบคลุมราคา ข้อดี ข้อเสีย
@@ -320,7 +321,7 @@
         <div class="card-link">อ่านเอกสาร <span>→</span></div>
       </a>
 
-      <a href="docs/Cost_Analysis_Detailed/" class="card green">
+      <a href="docs/Cost_Analysis_Detailed.html" class="card green">
         <div class="icon">💰</div>
         <h3>การวิเคราะห์ต้นทุนโดยละเอียด</h3>
         <p>คำนวณต้นทุน 3–5 ปี ใน 3 สถานการณ์จริง พร้อม Break-even Analysis
@@ -328,12 +329,19 @@
         <div class="card-link">อ่านเอกสาร <span>→</span></div>
       </a>
 
-      <a href="docs/Decision_Tree_Guide/" class="card purple">
+      <a href="docs/Decision_Tree_Guide.html" class="card purple">
         <div class="icon">🎯</div>
         <h3>คู่มือการตัดสินใจ (Decision Tree)</h3>
         <p>Decision Tree แบบ step-by-step พร้อม Decision Matrix กรณีศึกษา
            และ Common Mistakes ที่ควรระวัง</p>
         <div class="card-link">อ่านเอกสาร <span>→</span></div>
+      </a>
+
+      <a href="archive_cost_calculator.html" class="card orange">
+        <div class="icon">🧮</div>
+        <h3>Archive Cost Calculator</h3>
+        <p>กรอกขนาดข้อมูล ระยะเวลา และความถี่ดึง — คำนวณต้นทุนจริงทั้งสองระบบพร้อมคำแนะนำอัตโนมัติ</p>
+        <div class="card-link" style="color:#ea580c;">เปิดเครื่องคำนวณ <span>→</span></div>
       </a>
 
     </div>
@@ -405,7 +413,7 @@
 <section>
   <div class="container">
     <h2 class="sec-title">ควรเลือกอะไร?</h2>
-    <p class="sec-desc">ตอบตาม use case ขององค์กร — หรือดู <a href="docs/Decision_Tree_Guide/" style="color:var(--blue);font-weight:600;">คู่มือฉบับเต็ม</a></p>
+    <p class="sec-desc">ตอบตาม use case ขององค์กร — หรือดู <a href="docs/Decision_Tree_Guide.html" style="color:var(--blue);font-weight:600;">คู่มือฉบับเต็ม</a> หรือ <a href="archive_cost_calculator.html" style="color:#ea580c;font-weight:600;">คำนวณต้นทุนเอง →</a></p>
     <div class="choose-grid">
 
       <div class="choose-box m365">

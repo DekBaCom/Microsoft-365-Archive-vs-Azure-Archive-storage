@@ -164,7 +164,7 @@
               <option value="1024" selected>MB</option>
             </select>
           </div>
-          <span class="hint">⚠️ Azure: ขั้นต่ำ 128 KB/ไฟล์ (ก.ค. 2026)</span>
+          <span class="hint">⚠️ Azure: ขั้นต่ำ 128 KiB/ไฟล์ (บัญชีใหม่ ≥ 1 ก.ค. 2026 / บัญชีเก่า ≥ 1 ก.ค. 2027)</span>
         </div>
 
       </div>
@@ -230,7 +230,8 @@
           <div class="cost-sub"  id="m365Sub">รวม — ปี</div>
           <ul class="breakdown">
             <li><span class="lbl">ค่าจัดเก็บ</span>        <span class="val" id="m365Storage">-</span></li>
-            <li><span class="lbl">ค่า Retrieval</span>      <span class="val">ฟรี (มี.ค. 2025+)</span></li>
+            <li><span class="lbl">ค่า Reactivation (SharePoint)</span> <span class="val">ฟรี (31 มี.ค. 2025+)</span></li>
+            <li><span class="lbl">ค่า Reactivation (OneDrive ไม่มี license)</span> <span class="val" style="color:#dc2626">$0.60/GB ⚠️</span></li>
             <li><span class="lbl">ค่า Operations</span>     <span class="val">รวมอยู่แล้ว</span></li>
           </ul>
         </div>
@@ -246,9 +247,9 @@
           <div class="cost-main" id="azureTotal">$0</div>
           <div class="cost-sub"  id="azureSub">รวม — ปี</div>
           <ul class="breakdown">
-            <li><span class="lbl">ค่าจัดเก็บ</span>         <span class="val" id="azureStorage">-</span></li>
-            <li><span class="lbl">ค่า Retrieval</span>       <span class="val" id="azureRetrieval">-</span></li>
-            <li><span class="lbl">ค่า Read Operations</span> <span class="val" id="azureOps">-</span></li>
+            <li><span class="lbl">ค่าจัดเก็บ</span>                        <span class="val" id="azureStorage">-</span></li>
+            <li><span class="lbl">ค่า Rehydration ($0.02/GB standard)</span> <span class="val" id="azureRetrieval">-</span></li>
+            <li><span class="lbl">ค่า Operations ($5.50/10K Archive reads)</span> <span class="val" id="azureOps">-</span></li>
           </ul>
         </div>
       </div>
@@ -267,9 +268,11 @@
       </div>
 
       <div class="warning-box" id="smallFileWarning">
-        <strong>⚠️ คำเตือน: ไฟล์ขนาดเล็ก (ตั้งแต่ ก.ค. 2026)</strong><br>
-        ขนาดไฟล์เฉลี่ยของคุณน้อยกว่า 128 KB — Azure Archive จะคิดค่า <strong>128 KB ขั้นต่ำต่อไฟล์</strong>
-        ทำให้ต้นทุนจริงสูงกว่าที่คำนวณ ควรพิจารณารวมไฟล์เล็กเป็น ZIP ก่อน Archive
+        <strong>⚠️ คำเตือน: ไฟล์ขนาดเล็กกว่า 128 KiB</strong><br>
+        Azure Archive จะคิดค่า <strong>128 KiB ขั้นต่ำต่อไฟล์</strong> ทำให้ต้นทุนจริงสูงกว่าที่คำนวณ<br>
+        บังคับใช้: บัญชีใหม่ตั้งแต่ <strong>1 ก.ค. 2026</strong> · บัญชีที่มีอยู่แล้วตั้งแต่ <strong>1 ก.ค. 2027</strong><br>
+        แนะนำ: รวมไฟล์เล็กเป็น ZIP ก่อน Archive หรือใช้ Smart Tier
+        <br><small style="color:#78350f">ที่มา: <a href="https://learn.microsoft.com/en-us/azure/storage/blobs/access-tiers-overview" target="_blank" style="color:#78350f">learn.microsoft.com — Access tiers overview</a></small>
       </div>
 
     </div>
@@ -325,9 +328,15 @@
     const m365Total       = m365StorageCost;
 
     /* Azure Archive */
+    // Storage: per-region rate per GB/month
     const azureStorageCost   = sizeGB * azureRate * months;
+    // Retrieval: $0.02/GB standard-priority rehydration (source: learn.microsoft.com/azure/storage/blobs)
     const azureRetrievalCost = sizeGB * retrievals * 0.02;
-    const azureOpsCost       = retrievals > 0 ? (retrievals * 0.55 / 10000) * (sizeGB * 1000 / 1) : 0;
+    // Operations: Archive tier read = $5.50/10,000 ops (NOT $0.55 which is Cool tier)
+    // Estimate file count from user-supplied average file size
+    const avgFileSizeMB  = Math.max(fileSizeKB / 1024, 0.001);
+    const estimatedFiles = (sizeGB * 1024) / avgFileSizeMB;
+    const azureOpsCost   = retrievals > 0 ? (estimatedFiles * retrievals) * (5.50 / 10000) : 0;
     const azureTotal         = azureStorageCost + azureRetrievalCost + azureOpsCost;
 
     const savings    = m365Total - azureTotal;

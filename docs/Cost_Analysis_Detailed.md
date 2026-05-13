@@ -1,3 +1,9 @@
+---
+title: การวิเคราะห์ต้นทุนโดยละเอียด
+layout: default
+nav_order: 3
+---
+
 # การคำนวณต้นทุนโดยละเอียด
 ## Microsoft 365 Archive vs Azure Archive Storage
 

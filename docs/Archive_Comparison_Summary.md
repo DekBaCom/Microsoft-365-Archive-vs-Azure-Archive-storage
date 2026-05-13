@@ -1,3 +1,9 @@
+---
+title: การเปรียบเทียบ Archive Solutions
+layout: default
+nav_order: 2
+---
+
 # Microsoft 365 Archive vs Azure Archive Storage
 ## เปรียบเทียบสำหรับการเก็บไฟล์ระยะยาว
 

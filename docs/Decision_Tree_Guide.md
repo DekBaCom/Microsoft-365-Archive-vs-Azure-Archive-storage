@@ -1,3 +1,9 @@
+---
+title: คู่มือการตัดสินใจ (Decision Tree)
+layout: default
+nav_order: 4
+---
+
 # 🎯 Decision Tree: เลือก Archive Solution
 
 ---

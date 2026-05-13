@@ -1,7 +1,7 @@
 title: Microsoft 365 Archive vs Azure Archive Storage
 description: เปรียบเทียบและวิเคราะห์ Microsoft 365 Archive กับ Azure Archive Storage สำหรับการเก็บข้อมูลระยะยาว
 
-theme: just-the-docs
+remote_theme: just-the-docs/just-the-docs
 
 color_scheme: light
 
@@ -41,4 +41,5 @@ callouts:
     color: red
 
 plugins:
+  - jekyll-remote-theme
   - jekyll-seo-tag

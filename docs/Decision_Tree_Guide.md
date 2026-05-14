@@ -347,3 +347,14 @@ START: มีข้อมูลหลากหลาย
 ---
 
 **เมื่อตัดสินใจแล้ว → ไปดำเนินการตามขั้นตอน!**
+
+---
+
+## 📚 แหล่งอ้างอิง (Microsoft Official Documentation)
+
+1. [Microsoft 365 Archive overview](https://learn.microsoft.com/en-us/microsoft-365/archive/archive-overview) — Microsoft Learn (ภาพรวมและการตั้งค่า M365 Archive)
+2. [Hot, Cool, Cold, and Archive access tiers for blob data](https://learn.microsoft.com/en-us/azure/storage/blobs/access-tiers-overview) — Microsoft Learn (เกณฑ์เลือก tier, 128 KiB minimum)
+3. [Azure Blob Storage lifecycle management](https://learn.microsoft.com/en-us/azure/storage/blobs/lifecycle-management-overview) — Microsoft Learn (ตั้ง Lifecycle Policy: Hot → Cool → Cold → Archive)
+4. [Microsoft Purview eDiscovery solutions overview](https://learn.microsoft.com/en-us/purview/ediscovery-overview) — Microsoft Learn (Compliance & eDiscovery requirements)
+5. [Manage site collection storage limits (SharePoint quota)](https://learn.microsoft.com/en-us/sharepoint/manage-site-collection-storage-limits) — Microsoft Learn (ตรวจสอบ quota ก่อนใช้ M365 Archive)
+6. [Azure Blob Storage pricing](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/) — Microsoft Azure (ราคา Archive tier และค่า Operations)

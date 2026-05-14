@@ -205,3 +205,14 @@ nav_order: 2
 
 **เอกสารนี้สร้างเมื่อ**: May 2026
 **ข้อมูลล่าสุด**: ตามข้อมูล Microsoft & Azure ระหว่าง Mar-May 2026
+
+---
+
+## 📚 แหล่งอ้างอิง (Microsoft Official Documentation)
+
+1. [Microsoft 365 Archive overview](https://learn.microsoft.com/en-us/microsoft-365/archive/archive-overview) — Microsoft Learn
+2. [Hot, Cool, Cold, and Archive access tiers for blob data](https://learn.microsoft.com/en-us/azure/storage/blobs/access-tiers-overview) — Microsoft Learn
+3. [Azure Blob Storage pricing](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/) — Microsoft Azure
+4. [Manage site collection storage limits (SharePoint quota)](https://learn.microsoft.com/en-us/sharepoint/manage-site-collection-storage-limits) — Microsoft Learn
+5. [Microsoft Purview eDiscovery solutions overview](https://learn.microsoft.com/en-us/purview/ediscovery-overview) — Microsoft Learn
+6. [Azure Blob Storage lifecycle management](https://learn.microsoft.com/en-us/azure/storage/blobs/lifecycle-management-overview) — Microsoft Learn

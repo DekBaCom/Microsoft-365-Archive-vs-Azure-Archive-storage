@@ -42,6 +42,9 @@ callouts:
     title: คำเตือน
     color: red
 
+kramdown:
+  input: GFM
+
 plugins:
   - jekyll-remote-theme
   - jekyll-seo-tag

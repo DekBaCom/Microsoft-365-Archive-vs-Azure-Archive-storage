@@ -1,0 +1,84 @@
+<style>
+  /* Interactive Checklist */
+  li > input[type="checkbox"],
+  .task-list-item-checkbox {
+    cursor: pointer !important;
+    width: 15px;
+    height: 15px;
+    accent-color: #0078d4;
+    margin-right: 5px;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+
+  .task-item-checked {
+    color: #888;
+    text-decoration: line-through;
+    text-decoration-color: #aaa;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  /* Undo line-through on the checkbox itself */
+  .task-item-checked > input[type="checkbox"] {
+    text-decoration: none;
+    opacity: 1;
+  }
+
+  /* Controls row below each checklist */
+  .checklist-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 6px 0 20px;
+  }
+
+  .checklist-progress {
+    font-size: 12px;
+    font-weight: 600;
+    color: #0078d4;
+    background: #e8f2fb;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+  }
+
+  .checklist-export-btn,
+  .checklist-reset-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+    line-height: 1.4;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .checklist-export-btn {
+    background: #0078d4;
+    color: #fff;
+    border: 1px solid #0078d4;
+  }
+
+  .checklist-export-btn:hover {
+    background: #005a9e;
+    border-color: #005a9e;
+  }
+
+  .checklist-reset-btn {
+    background: #fff;
+    color: #555;
+    border: 1px solid #ccc;
+  }
+
+  .checklist-reset-btn:hover {
+    background: #f5f5f5;
+    border-color: #999;
+  }
+</style>
+
+<script src="{{ '/assets/js/interactive-checklist.js' | relative_url }}" defer></script>

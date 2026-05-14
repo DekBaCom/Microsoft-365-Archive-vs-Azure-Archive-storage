@@ -54,6 +54,7 @@
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
     @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
     .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group.span2 { grid-column: 1 / -1; }
     label { font-size: .85rem; font-weight: 600; color: var(--dark); }
     .hint { font-size: .75rem; color: var(--muted); }
     input[type="number"], select { padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: .9rem; font-family: var(--font); color: var(--text); background: var(--surface); transition: border-color .2s; width: 100%; }
@@ -66,6 +67,10 @@
     .toggle-btn.active { border-color: var(--blue); background: #eff6ff; color: var(--blue); }
     .btn-calc { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--blue), var(--azure)); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all .2s; margin-top: .5rem; }
     .btn-calc:hover { opacity: .9; transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+
+    /* HYBRID PANEL */
+    .hybrid-panel { display: none; margin-top: 1.25rem; padding: 1.25rem; border-top: 1px solid var(--border); background: #f8fafc; border-radius: 10px; }
+    .hybrid-panel-label { font-size: .8rem; font-weight: 700; color: var(--muted); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 1rem; }
 
     /* RESULTS */
     #results { display: none; }
@@ -87,14 +92,19 @@
     .breakdown li:last-child { border-bottom: none; }
     .breakdown .lbl { color: var(--muted); }
     .breakdown .val { font-weight: 600; }
+    .growth-note { font-size: .77rem; color: #7c3aed; background: #f5f3ff; border-radius: 6px; padding: 6px 10px; margin-top: 8px; display: none; }
     .savings-banner { border-radius: var(--radius); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; color: white; }
     .savings-banner .s-label { font-size: .9rem; opacity: .85; }
     .savings-banner .s-value { font-size: 2rem; font-weight: 800; }
     .savings-banner .s-pct { background: rgba(255,255,255,.2); border-radius: 8px; padding: 6px 16px; font-size: 1.1rem; font-weight: 700; }
-    .recommend { border-radius: var(--radius); padding: 1.25rem 1.5rem; border-left: 4px solid; font-size: .9rem; line-height: 1.6; }
+    .recommend { border-radius: var(--radius); padding: 1.25rem 1.5rem; border-left: 4px solid; font-size: .9rem; line-height: 1.6; margin-bottom: 1rem; }
     .recommend.m365   { background: #eff6ff; border-color: var(--blue); }
     .recommend.azure  { background: #f0fdf4; border-color: var(--green); }
     .recommend strong { display: block; font-size: 1rem; margin-bottom: .25rem; }
+    .insight-box { border-radius: var(--radius); padding: 1.25rem 1.5rem; border-left: 4px solid #f59e0b; background: #fffbeb; font-size: .87rem; line-height: 1.7; margin-bottom: 1rem; display: none; }
+    .insight-box > strong { display: block; font-size: .95rem; margin-bottom: .4rem; color: #92400e; }
+    .insight-box ul { padding-left: 1.2rem; }
+    .insight-box li { margin-bottom: .25rem; }
     .warning-box { background: #fef9c3; border: 1px solid #fde047; border-radius: 8px; padding: 1rem 1.25rem; font-size: .85rem; margin-top: 1rem; display: none; }
     .warning-box strong { color: #92400e; }
 
@@ -122,6 +132,7 @@
 <div class="page">
   <div class="container">
 
+    <!-- ═══════════════════════════════════════════ STORAGE & RETENTION ══ -->
     <div class="card">
       <div class="card-title">📦 ขนาดและระยะเวลาจัดเก็บ</div>
       <div class="form-grid">
@@ -167,9 +178,21 @@
           <span class="hint">⚠️ Azure: ขั้นต่ำ 128 KiB/ไฟล์ (บัญชีใหม่ ≥ 1 ก.ค. 2026 / บัญชีเก่า ≥ 1 ก.ค. 2027)</span>
         </div>
 
+        <div class="form-group">
+          <label for="growthRate">อัตราการเติบโตของข้อมูล / ปี</label>
+          <select id="growthRate">
+            <option value="0" selected>คงที่ (0%)</option>
+            <option value="0.10">+10% / ปี</option>
+            <option value="0.25">+25% / ปี</option>
+            <option value="0.50">+50% / ปี</option>
+          </select>
+          <span class="hint">คาดการณ์ข้อมูลที่เพิ่มขึ้น — ส่งผลต่อต้นทุนรวมระยะยาว</span>
+        </div>
+
       </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════ ORG CONTEXT ══ -->
     <div class="card">
       <div class="card-title">⚙️ บริบทองค์กร</div>
       <div class="form-grid">
@@ -207,12 +230,85 @@
           </select>
         </div>
 
+        <div class="form-group">
+          <label>มี Azure Subscription อยู่แล้ว?</label>
+          <div class="toggle-group" id="hasAzureSub">
+            <button class="toggle-btn"        data-val="yes" onclick="toggle(this,'hasAzureSub')">มีแล้ว</button>
+            <button class="toggle-btn active" data-val="no"  onclick="toggle(this,'hasAzureSub')">ยังไม่มี</button>
+          </div>
+          <span class="hint">มีผลต่อ setup overhead และความง่ายในการ deploy</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ HYBRID & INTEGRATION ══ -->
+    <div class="card">
+      <div class="card-title">🔗 Application &amp; Hybrid Integration</div>
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>ต่อกับ Application ภายนอก / On-premise?</label>
+          <div class="toggle-group" id="hasHybrid">
+            <button class="toggle-btn"        data-val="yes" onclick="toggle(this,'hasHybrid');showHybrid(true)">ใช่</button>
+            <button class="toggle-btn active" data-val="no"  onclick="toggle(this,'hasHybrid');showHybrid(false)">ไม่มี</button>
+          </div>
+          <span class="hint">เช่น On-premise ERP, Custom API, Power Apps, SAP, Dynamics 365</span>
+        </div>
+
+      </div>
+
+      <!-- Hybrid sub-panel -->
+      <div id="hybridPanel" class="hybrid-panel">
+        <div class="hybrid-panel-label">⚙️ รายละเอียด Hybrid Integration</div>
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>ประเภท Application</label>
+            <div class="toggle-group" id="appType">
+              <button class="toggle-btn active" data-val="powerplatform" onclick="toggle(this,'appType')">Power Platform</button>
+              <button class="toggle-btn"        data-val="customapi"     onclick="toggle(this,'appType')">Custom API / SDK</button>
+              <button class="toggle-btn"        data-val="erp"           onclick="toggle(this,'appType')">ERP / LOB</button>
+            </div>
+            <span class="hint">Power Platform ใช้ Graph API · Custom API ใช้ Blob SDK · ERP มี SharePoint Connector อยู่แล้ว</span>
+          </div>
+
+          <div class="form-group">
+            <label>SLA การดึงข้อมูล (Retrieval Latency)</label>
+            <div class="toggle-group" id="retrievalSLA">
+              <button class="toggle-btn active" data-val="immediate" onclick="toggle(this,'retrievalSLA')">ทันที (&lt;1 ชม.)</button>
+              <button class="toggle-btn"        data-val="hours"     onclick="toggle(this,'retrievalSLA')">รับได้ถึง 15 ชม.</button>
+              <button class="toggle-btn"        data-val="flexible"  onclick="toggle(this,'retrievalSLA')">ยืดหยุ่น</button>
+            </div>
+            <span class="hint">Azure Archive Rehydration (Standard) ใช้เวลา ~15 ชั่วโมง</span>
+          </div>
+
+          <div class="form-group">
+            <label>ประเภทการเชื่อมต่อ On-premise</label>
+            <div class="toggle-group" id="connectivity">
+              <button class="toggle-btn"        data-val="expressroute" onclick="toggle(this,'connectivity')">ExpressRoute</button>
+              <button class="toggle-btn"        data-val="vpn"          onclick="toggle(this,'connectivity')">VPN Gateway</button>
+              <button class="toggle-btn active" data-val="internet"     onclick="toggle(this,'connectivity')">Public Internet</button>
+            </div>
+            <span class="hint">ส่งผลต่อค่า Data Egress (Outbound) ของ Azure ที่รวมในการคำนวณ</span>
+          </div>
+
+          <div class="form-group">
+            <label>ปริมาณข้อมูลที่ดึงต่อครั้ง</label>
+            <div class="toggle-group" id="retrievalVolume">
+              <button class="toggle-btn active" data-val="full"    onclick="toggle(this,'retrievalVolume')">ทั้งหมด (Full)</button>
+              <button class="toggle-btn"        data-val="partial" onclick="toggle(this,'retrievalVolume')">บางส่วน (~10%)</button>
+            </div>
+            <span class="hint">มีผลต่อค่า Rehydration, Egress, และ Operations</span>
+          </div>
+
+        </div>
       </div>
     </div>
 
     <button class="btn-calc" onclick="calculate()">🧮 คำนวณต้นทุนเปรียบเทียบ</button>
 
-    <!-- RESULTS -->
+    <!-- ═══════════════════════════════════════════ RESULTS ══ -->
     <div id="results">
 
       <div style="height:1.5rem"></div>
@@ -234,6 +330,7 @@
             <li><span class="lbl">ค่า Reactivation (OneDrive ไม่มี license)</span> <span class="val" style="color:#dc2626">$0.60/GB ⚠️</span></li>
             <li><span class="lbl">ค่า Operations</span>     <span class="val">รวมอยู่แล้ว</span></li>
           </ul>
+          <div id="growthNoteM365" class="growth-note"></div>
         </div>
 
         <div class="result-box azure" id="boxAzure">
@@ -247,10 +344,12 @@
           <div class="cost-main" id="azureTotal">$0</div>
           <div class="cost-sub"  id="azureSub">รวม — ปี</div>
           <ul class="breakdown">
-            <li><span class="lbl">ค่าจัดเก็บ</span>                        <span class="val" id="azureStorage">-</span></li>
-            <li><span class="lbl">ค่า Rehydration ($0.02/GB standard)</span> <span class="val" id="azureRetrieval">-</span></li>
+            <li><span class="lbl">ค่าจัดเก็บ</span>                          <span class="val" id="azureStorage">-</span></li>
+            <li><span class="lbl">ค่า Rehydration ($0.02/GB standard)</span>  <span class="val" id="azureRetrieval">-</span></li>
             <li><span class="lbl">ค่า Operations ($5.50/10K Archive reads)</span> <span class="val" id="azureOps">-</span></li>
+            <li id="egressRow" style="display:none"><span class="lbl">ค่า Data Egress (Outbound)</span> <span class="val" id="azureEgress">-</span></li>
           </ul>
+          <div id="growthNoteAzure" class="growth-note"></div>
         </div>
       </div>
 
@@ -265,6 +364,12 @@
       <div class="recommend" id="recommendBox">
         <strong id="recommendTitle">คำแนะนำ</strong>
         <span id="recommendText"></span>
+      </div>
+
+      <!-- Hybrid integration insights -->
+      <div class="insight-box" id="hybridInsight">
+        <strong>🔗 Hybrid Integration — สิ่งที่ควรรู้</strong>
+        <div id="hybridInsightText"></div>
       </div>
 
       <div class="warning-box" id="smallFileWarning">
@@ -289,6 +394,8 @@
       <li><a href="https://learn.microsoft.com/en-us/microsoft-365/archive/archive-overview" target="_blank" rel="noopener" style="color:var(--blue);">Microsoft 365 Archive overview (ราคา $0.05/GB/เดือน + Reactivation ฟรี) — Microsoft Learn</a></li>
       <li><a href="https://learn.microsoft.com/en-us/azure/storage/blobs/archive-blob" target="_blank" rel="noopener" style="color:var(--blue);">Archive a blob (Rehydration, ค่า Operations) — Microsoft Learn</a></li>
       <li><a href="https://learn.microsoft.com/en-us/azure/storage/blobs/lifecycle-management-overview" target="_blank" rel="noopener" style="color:var(--blue);">Azure Blob Storage lifecycle management — Microsoft Learn</a></li>
+      <li><a href="https://learn.microsoft.com/en-us/graph/api/resources/sharepoint" target="_blank" rel="noopener" style="color:var(--blue);">Microsoft Graph API — SharePoint &amp; M365 Archive integration — Microsoft Learn</a></li>
+      <li><a href="https://azure.microsoft.com/en-us/pricing/details/expressroute/" target="_blank" rel="noopener" style="color:var(--blue);">Azure ExpressRoute pricing (Egress metered rate) — Microsoft Azure</a></li>
     </ol>
   </div>
 </section>
@@ -314,66 +421,122 @@
 
   function getToggle(groupId) {
     const a = document.getElementById(groupId).querySelector('.toggle-btn.active');
-    return a ? a.dataset.val : 'no';
+    return a ? a.dataset.val : '';
+  }
+
+  function showHybrid(show) {
+    document.getElementById('hybridPanel').style.display = show ? 'block' : 'none';
   }
 
   function fmt(n) {
     return '$' + Math.round(n).toLocaleString('en-US');
   }
 
+  function fmtGB(gb) {
+    return gb >= 1024 ? (gb / 1024).toFixed(1) + ' TB' : gb.toFixed(0) + ' GB';
+  }
+
   function calculate() {
-    const sizeGB      = parseFloat(document.getElementById('storageSize').value)
-                      * parseFloat(document.getElementById('storageUnit').value);
-    const years       = parseInt(document.getElementById('years').value);
-    const months      = years * 12;
-    const retrievals  = parseFloat(document.getElementById('retrievals').value) * years;
-    const fileSizeKB  = parseFloat(document.getElementById('avgFileSize').value)
-                      * parseFloat(document.getElementById('fileSizeUnit').value);
-    const azureRate   = parseFloat(document.getElementById('azureRegion').value);
+    const sizeGB     = parseFloat(document.getElementById('storageSize').value)
+                     * parseFloat(document.getElementById('storageUnit').value);
+    const years      = parseInt(document.getElementById('years').value);
+    const months     = years * 12;
+    const retrievalsPerYear = parseFloat(document.getElementById('retrievals').value);
+    const retrievals = retrievalsPerYear * years;
+    const fileSizeKB = parseFloat(document.getElementById('avgFileSize').value)
+                     * parseFloat(document.getElementById('fileSizeUnit').value);
+    const azureRate  = parseFloat(document.getElementById('azureRegion').value);
+    const growthRate = parseFloat(document.getElementById('growthRate').value);
 
-    const inM365         = getToggle('inM365')         === 'yes';
-    const needCompliance = getToggle('needCompliance')  === 'yes';
-    const inQuota        = getToggle('inQuota')         === 'yes';
+    const inM365         = getToggle('inM365')        === 'yes';
+    const needCompliance = getToggle('needCompliance') === 'yes';
+    const inQuota        = getToggle('inQuota')        === 'yes';
+    const hasAzureSub    = getToggle('hasAzureSub')   === 'yes';
 
-    /* M365 Archive */
-    const m365Rate        = inQuota ? 0 : 0.05;
-    const m365StorageCost = sizeGB * m365Rate * months;
+    const hasHybrid    = getToggle('hasHybrid') === 'yes';
+    const appType      = hasHybrid ? getToggle('appType')         : 'none';
+    const retrievalSLA = hasHybrid ? getToggle('retrievalSLA')    : 'flexible';
+    const connectivity = hasHybrid ? getToggle('connectivity')    : 'internet';
+    const retrievalVol = hasHybrid ? getToggle('retrievalVolume') : 'full';
+    const retrievalFactor = retrievalVol === 'partial' ? 0.10 : 1.0;
+
+    // --- Data growth: compute average storage GB over the retention period ---
+    // Average = S * Σ(1+r)^i / N  for i = 0..N-1
+    let avgStorageGB     = sizeGB;
+    let projectedFinalGB = sizeGB;
+    if (growthRate > 0) {
+      let sum = 0;
+      for (let i = 0; i < years; i++) sum += Math.pow(1 + growthRate, i);
+      avgStorageGB     = sizeGB * (sum / years);
+      projectedFinalGB = sizeGB * Math.pow(1 + growthRate, years);
+    }
+
+    // --- Data Egress rate (Azure outbound to on-premise / internet) ---
+    let egressRate = 0;
+    if (hasHybrid && retrievals > 0) {
+      egressRate = connectivity === 'expressroute' ? 0.025 : 0.087;
+      // ExpressRoute metered Zone 1: ~$0.025/GB
+      // Public Internet / VPN Zone 1 outbound: ~$0.087/GB (first 10 TB)
+    }
+
+    /* ── M365 Archive ─────────────────────────── */
+    const m365Rate        = inQuota ? 0 : 0.05;          // $0.05/GB/month
+    const m365StorageCost = avgStorageGB * m365Rate * months;
     const m365Total       = m365StorageCost;
 
-    /* Azure Archive */
-    // Storage: per-region rate per GB/month
-    const azureStorageCost   = sizeGB * azureRate * months;
-    // Retrieval: $0.02/GB standard-priority rehydration (source: learn.microsoft.com/azure/storage/blobs)
-    const azureRetrievalCost = sizeGB * retrievals * 0.02;
-    // Operations: Archive tier read = $5.50/10,000 ops (NOT $0.55 which is Cool tier)
-    // Estimate file count from user-supplied average file size
-    const avgFileSizeMB  = Math.max(fileSizeKB / 1024, 0.001);
-    const estimatedFiles = (sizeGB * 1024) / avgFileSizeMB;
-    const azureOpsCost   = retrievals > 0 ? (estimatedFiles * retrievals) * (5.50 / 10000) : 0;
-    const azureTotal         = azureStorageCost + azureRetrievalCost + azureOpsCost;
+    /* ── Azure Archive ────────────────────────── */
+    const azureStorageCost   = avgStorageGB * azureRate * months;
+    const azureRetrievalCost = avgStorageGB * retrievals * retrievalFactor * 0.02;
+    const avgFileSizeMB      = Math.max(fileSizeKB / 1024, 0.001);
+    const estimatedFiles     = (avgStorageGB * 1024) / avgFileSizeMB;
+    const azureOpsCost       = retrievals > 0
+                             ? (estimatedFiles * retrievals * retrievalFactor) * (5.50 / 10000)
+                             : 0;
+    const azureEgressCost    = avgStorageGB * retrievals * retrievalFactor * egressRate;
+    const azureTotal         = azureStorageCost + azureRetrievalCost + azureOpsCost + azureEgressCost;
 
     const savings    = m365Total - azureTotal;
     const savingsPct = m365Total > 0 ? (savings / m365Total * 100) : 0;
 
-    /* Fill M365 */
+    /* ── Fill M365 result ─────────────────────── */
     document.getElementById('m365Total').textContent   = fmt(m365Total);
-    document.getElementById('m365Sub').textContent     = `รวม ${sizeGB >= 1024 ? (sizeGB/1024).toFixed(1)+' TB' : sizeGB.toFixed(0)+' GB'} / ${years} ปี`;
+    document.getElementById('m365Sub').textContent     = `รวม ${fmtGB(sizeGB)} / ${years} ปี`;
     document.getElementById('m365Storage').textContent = inQuota ? '$0 (อยู่ในโควต้า)' : fmt(m365StorageCost);
 
-    /* Fill Azure */
-    document.getElementById('azureTotal').textContent      = fmt(azureTotal);
-    document.getElementById('azureSub').textContent        = `รวม ${sizeGB >= 1024 ? (sizeGB/1024).toFixed(1)+' TB' : sizeGB.toFixed(0)+' GB'} / ${years} ปี`;
-    document.getElementById('azureStorage').textContent    = fmt(azureStorageCost);
-    document.getElementById('azureRetrieval').textContent  = retrievals > 0 ? fmt(azureRetrievalCost) : '$0';
-    document.getElementById('azureOps').textContent        = retrievals > 0 ? fmt(azureOpsCost) : '$0';
+    /* ── Fill Azure result ────────────────────── */
+    document.getElementById('azureTotal').textContent     = fmt(azureTotal);
+    document.getElementById('azureSub').textContent       = `รวม ${fmtGB(sizeGB)} / ${years} ปี`;
+    document.getElementById('azureStorage').textContent   = fmt(azureStorageCost);
+    document.getElementById('azureRetrieval').textContent = retrievals > 0 ? fmt(azureRetrievalCost) : '$0';
+    document.getElementById('azureOps').textContent       = retrievals > 0 ? fmt(azureOpsCost) : '$0';
 
-    /* Winner badge */
+    const egressRow = document.getElementById('egressRow');
+    if (hasHybrid && egressRate > 0 && retrievals > 0) {
+      egressRow.style.display = 'flex';
+      document.getElementById('azureEgress').textContent = fmt(azureEgressCost);
+    } else {
+      egressRow.style.display = 'none';
+    }
+
+    /* ── Growth notes ─────────────────────────── */
+    const noteM365  = document.getElementById('growthNoteM365');
+    const noteAzure = document.getElementById('growthNoteAzure');
+    if (growthRate > 0) {
+      const txt = `📈 ปีที่ ${years} คาดว่าข้อมูลจะเพิ่มเป็น ${fmtGB(projectedFinalGB)} (เฉลี่ย ${fmtGB(avgStorageGB)}/ปี)`;
+      noteM365.textContent  = txt;
+      noteAzure.textContent = txt;
+      noteM365.style.display = noteAzure.style.display = 'block';
+    } else {
+      noteM365.style.display = noteAzure.style.display = 'none';
+    }
+
+    /* ── Winner badge ─────────────────────────── */
     document.getElementById('boxM365').classList.remove('winner');
     document.getElementById('boxAzure').classList.remove('winner');
-    if (savings > 0)  document.getElementById('boxAzure').classList.add('winner');
-    else if (savings < 0) document.getElementById('boxM365').classList.add('winner');
+    if (savings > 0)       document.getElementById('boxAzure').classList.add('winner');
+    else if (savings < 0)  document.getElementById('boxM365').classList.add('winner');
 
-    /* Savings banner */
+    /* ── Savings banner ───────────────────────── */
     const banner = document.getElementById('savingsBanner');
     if (savings > 0) {
       banner.style.background = 'linear-gradient(135deg,#166534,#15803d)';
@@ -385,37 +548,109 @@
     document.getElementById('savingsAmt').textContent = fmt(Math.abs(savings));
     document.getElementById('savingsPct').textContent = Math.abs(savingsPct).toFixed(0) + '%';
 
-    /* Recommendation */
+    /* ── Recommendation ───────────────────────── */
     const recBox   = document.getElementById('recommendBox');
     const recTitle = document.getElementById('recommendTitle');
     const recText  = document.getElementById('recommendText');
 
-    if (needCompliance && inM365) {
-      recBox.className = 'recommend m365';
+    // Priority order: SLA → App type → Compliance → Data location → Quota → Cost
+    if (hasHybrid && retrievalSLA === 'immediate') {
+      recBox.className     = 'recommend m365';
+      recTitle.textContent = '🔵 แนะนำ: Microsoft 365 Archive';
+      recText.textContent  = 'Application ต้องการดึงข้อมูลทันที — Azure Archive ไม่เหมาะเนื่องจาก Standard Rehydration ใช้เวลา ~15 ชั่วโมง M365 Archive เปิดไฟล์ได้ภายในไม่กี่นาทีผ่าน SharePoint / Graph API';
+
+    } else if (hasHybrid && appType === 'powerplatform' && inM365) {
+      recBox.className     = 'recommend m365';
+      recTitle.textContent = '🔵 แนะนำ: Microsoft 365 Archive';
+      recText.textContent  = 'Power Platform (Power Apps / Power Automate) เชื่อมต่อ M365 Archive ผ่าน Microsoft Graph API ได้โดยตรง ไม่ต้องเขียน Blob SDK เพิ่ม ลด development overhead และ maintenance cost ได้มาก';
+
+    } else if (hasHybrid && appType === 'erp' && inM365) {
+      recBox.className     = 'recommend m365';
+      recTitle.textContent = '🔵 แนะนำ: Microsoft 365 Archive';
+      recText.textContent  = 'ระบบ ERP / LOB (SAP, Dynamics 365, Oracle) ส่วนใหญ่มี SharePoint Connector ในตัว — M365 Archive integrate ได้โดยไม่ต้องพัฒนา middleware เพิ่ม';
+
+    } else if (needCompliance && inM365) {
+      recBox.className     = 'recommend m365';
       recTitle.textContent = '🔵 แนะนำ: Microsoft 365 Archive';
       recText.textContent  = 'คุณต้องการ Compliance / eDiscovery และข้อมูลอยู่ใน M365 — M365 Archive เป็นตัวเลือกเดียวที่รองรับ native แม้ราคาจะสูงกว่า แต่จำเป็นสำหรับข้อกำหนดทางกฎหมาย';
+
     } else if (!inM365) {
-      recBox.className = 'recommend azure';
+      recBox.className     = 'recommend azure';
       recTitle.textContent = '🟢 แนะนำ: Azure Archive Storage';
-      recText.textContent  = 'ข้อมูลของคุณไม่ได้อยู่ใน M365 — Azure Archive เหมาะกว่า ราคาถูกกว่าและยืดหยุ่น โปรดวางแผนการดึงข้อมูลล่วงหน้า เพราะใช้เวลา ~15 ชั่วโมง (Rehydration)';
+      recText.textContent  = 'ข้อมูลของคุณไม่ได้อยู่ใน M365 — Azure Archive เหมาะกว่า ราคาถูกกว่าและยืดหยุ่น'
+                           + (hasHybrid ? ' วางแผน Rehydration ล่วงหน้าเพราะใช้เวลา ~15 ชั่วโมง' : ' โปรดวางแผนการดึงข้อมูลล่วงหน้า');
+
     } else if (inQuota) {
-      recBox.className = 'recommend m365';
+      recBox.className     = 'recommend m365';
       recTitle.textContent = '🔵 แนะนำ: Microsoft 365 Archive (ฟรี!)';
       recText.textContent  = 'ข้อมูลของคุณอยู่ใน SharePoint quota — ค่าจัดเก็บ = $0 เลือก M365 Archive ได้เลย ได้ทั้ง eDiscovery + การเข้าถึงทันที โดยไม่เสียค่าเพิ่ม';
+
     } else if (savings > 0) {
-      recBox.className = 'recommend azure';
+      recBox.className     = 'recommend azure';
       recTitle.textContent = '🟢 แนะนำ: Azure Archive Storage';
-      recText.textContent  = `Azure Archive ประหยัดกว่า ${Math.abs(savingsPct).toFixed(0)}% (${fmt(Math.abs(savings))}) ตรวจสอบขนาดไฟล์ให้ใหญ่กว่า 128 KB และเตรียมรับ Rehydration เวลา ~15 ชั่วโมงเมื่อต้องดึงข้อมูล`;
+      recText.textContent  = `Azure Archive ประหยัดกว่า ${Math.abs(savingsPct).toFixed(0)}% (${fmt(Math.abs(savings))}) ตรวจสอบขนาดไฟล์ให้ใหญ่กว่า 128 KB`
+                           + (hasHybrid ? ` และวางแผน async Rehydration ~15 ชั่วโมงสำหรับ Application integration` : '');
+
     } else {
-      recBox.className = 'recommend m365';
+      recBox.className     = 'recommend m365';
       recTitle.textContent = '🔵 แนะนำ: Microsoft 365 Archive';
-      recText.textContent  = 'ในกรณีนี้ M365 Archive คุ้มค่ากว่า เนื่องจากค่า Retrieval ของ Azure สูงเมื่อดึงข้อมูลบ่อย';
+      recText.textContent  = 'ในกรณีนี้ M365 Archive คุ้มค่ากว่า เนื่องจากค่า Retrieval'
+                           + (hasHybrid ? ' + Egress' : '')
+                           + ' ของ Azure สูงเมื่อดึงข้อมูลบ่อย';
     }
 
-    /* Small file warning */
+    /* ── Hybrid insight panel ─────────────────── */
+    const insightBox  = document.getElementById('hybridInsight');
+    const insightText = document.getElementById('hybridInsightText');
+
+    if (hasHybrid) {
+      const tips = [];
+
+      // Retrieval SLA
+      if (retrievalSLA === 'immediate') {
+        tips.push('⏱️ <strong>Retrieval SLA:</strong> Azure Archive Standard Rehydration ใช้เวลา ~15 ชม. High-Priority Rehydration เร็วกว่า (~1 ชม.) แต่ราคาแพงกว่า ~10 เท่า — ไม่เหมาะกับ App ที่ต้องการข้อมูลทันที');
+      } else if (retrievalSLA === 'hours') {
+        tips.push('⏱️ <strong>Retrieval SLA:</strong> Standard Rehydration ใช้เวลา ~15 ชม. เหมาะกับ batch process เช่น รายงานประจำเดือน หรือ audit ที่วางแผนล่วงหน้าได้');
+      }
+
+      // App type
+      if (appType === 'powerplatform') {
+        tips.push('⚡ <strong>Power Platform:</strong> ใช้ <em>SharePoint Connector</em> หรือ <em>Microsoft Graph API</em> เชื่อมต่อ M365 Archive ได้โดยตรงผ่าน Power Apps / Power Automate ไม่ต้องเขียน Blob Storage SDK');
+      } else if (appType === 'customapi') {
+        tips.push('🔧 <strong>Custom API / SDK:</strong> Azure Blob Storage SDK รองรับ C#, Python, Java, Node.js — ออกแบบ async workflow: ส่ง Rehydration request → webhook แจ้งเมื่อพร้อม → serve ไฟล์จาก Hot tier');
+      } else if (appType === 'erp') {
+        tips.push('🏢 <strong>ERP / LOB System:</strong> SAP, Dynamics 365, Oracle มี SharePoint Connector ในตัว ทำให้ M365 Archive integrate ได้โดยไม่ต้องพัฒนา middleware — Azure ต้องการ custom adapter เพิ่มเติม');
+      }
+
+      // Connectivity & Egress
+      if (connectivity === 'internet' && egressRate > 0 && retrievals > 0) {
+        tips.push(`🌐 <strong>Data Egress (Public Internet):</strong> ค่า outbound อยู่ที่ ~$${egressRate}/GB — รวมอยู่ในการคำนวณแล้ว ถ้าดึงข้อมูลบ่อย ExpressRoute หรือ VPN + Private Endpoint จะช่วยลดค่าใช้จ่ายส่วนนี้`);
+      } else if (connectivity === 'expressroute') {
+        tips.push('🔌 <strong>ExpressRoute:</strong> ค่า Egress ลดเหลือ ~$0.025/GB (metered Zone 1) แต่มีค่า Circuit ประมาณ $55–$100+/เดือนขึ้นกับ bandwidth ที่เลือก คุ้มค่าถ้าดึงข้อมูลปริมาณมากสม่ำเสมอ');
+      } else if (connectivity === 'vpn') {
+        tips.push('🔒 <strong>VPN Gateway:</strong> ค่า Egress เท่ากับ Internet ($0.087/GB) แต่ได้ encrypted tunnel — ถ้าปริมาณข้อมูลสูง ควรพิจารณา ExpressRoute ที่ถูกกว่าต่อ GB');
+      }
+
+      // Partial retrieval
+      if (retrievalVol === 'partial') {
+        tips.push('📂 <strong>Partial Retrieval:</strong> ดึงเฉพาะ ~10% ช่วยลดค่า Rehydration และ Egress ได้มาก — ออกแบบ data layout ให้ query แบบ selective ได้ เช่น แยก folder ตามปีหรือแผนก');
+      }
+
+      // Azure Subscription
+      if (!hasAzureSub && getToggle('hasHybrid') === 'yes' && appType === 'customapi') {
+        tips.push('🆕 <strong>Azure Subscription:</strong> คุณยังไม่มี Azure subscription — ต้องคิดเพิ่มเรื่อง setup time, billing, IAM policy, และ Storage Account configuration สำหรับ Archive tier');
+      }
+
+      insightText.innerHTML = '<ul style="margin-top:.5rem">' + tips.map(t => `<li style="margin-bottom:.5rem">${t}</li>`).join('') + '</ul>';
+      insightBox.style.display = 'block';
+    } else {
+      insightBox.style.display = 'none';
+    }
+
+    /* ── Small file warning ───────────────────── */
     document.getElementById('smallFileWarning').style.display = fileSizeKB < 128 ? 'block' : 'none';
 
-    /* Show results */
+    /* ── Show results ─────────────────────────── */
     document.getElementById('results').style.display = 'block';
     setTimeout(() => {
       document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
